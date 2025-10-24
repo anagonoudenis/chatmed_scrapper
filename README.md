@@ -2,14 +2,16 @@
 
 **Production-ready, universal web scraping framework for medical data.**
 
-A bulletproof Python framework for ethically scraping, cleaning, and enriching medical data from **ANY website** or public APIs (PubMed, WHO) with comprehensive error handling and ML-powered enrichment.
+A bulletproof Python framework for ethically scraping, cleaning, and enriching medical data from **ANY website** or public APIs (PubMed, WHO) with comprehensive error handling and AI-powered multilingual enrichment.
 
 ## 🚀 Features
 
 ### Core Capabilities
 - **🤖 Autonomous Agent (NEW!)**: Zero-intervention scraping - generates topics, finds URLs, scrapes, validates, and enriches automatically
+- **🌍 Multilingual AI (NEW!)**: Generate Q&A pairs in 12 languages simultaneously (FR, EN, ES, AR, PT, DE, IT, ZH, JA, RU, HI, SW)
 - **🧠 AI-Powered with DeepSeek**: Intelligent topic generation, URL discovery, content validation, and Q&A generation
 - **Universal Web Scraper**: Scrape ANY medical website from URLs - automatic content extraction
+- **Massive Scale**: Up to 50 URLs per topic, 5 concurrent topics, 180,000+ Q&A pairs from 100 topics
 - **Batch Processing**: Scrape multiple URL files simultaneously, each with separate output folders
 - **Bulletproof Async Scraping**: Circuit breakers, retry with jitter, adaptive rate limiting
 - **API-First Approach**: PubMed E-utilities, WHO REST APIs (80% coverage)
@@ -29,9 +31,9 @@ A bulletproof Python framework for ethically scraping, cleaning, and enriching m
 
 ## ⚡ Quick Start
 
-### 🤖 Mode Autonome (NOUVEAU - Recommandé!)
+### 🤖 Autonomous Mode (NEW - Recommended!)
 
-**Zéro intervention humaine - L'agent fait tout automatiquement !**
+**Zero human intervention - The agent does everything automatically!**
 
 ```bash
 # 1. Install dependencies
@@ -49,12 +51,13 @@ python main.py auto-scrape
 
 # The agent will:
 # - Generate 50 medical topics automatically
-# - Find best URLs for each topic
-# - Scrape, validate, and enrich data
+# - Find best URLs for each topic (up to 50 per topic)
+# - Scrape, validate, and enrich data with AI
+# - Generate Q&A pairs in 12 languages
 # - Save organized datasets by topic
 ```
 
-### 🌐 Mode Manuel (URLs personnalisées)
+### 🌐 Manual Mode (Custom URLs)
 
 ```bash
 # 1. Install minimal dependencies (Windows-friendly)
@@ -181,27 +184,34 @@ data/output/
 
 **📖 Full guide:** See [AUTONOMOUS_GUIDE.md](AUTONOMOUS_GUIDE.md)
 
-**🚀 Mode Scraping Massif (Haute Performance):**
+**🚀 Massive Scraping Mode (High Performance):**
 
-Pour scraper une **quantité colossale de données** par sujet :
+To scrape a **massive amount of high-quality data** per topic:
 
 ```bash
-# Configuration optimisée dans config.toml :
+# Optimized configuration in config.toml:
 [autonomous]
-max_urls_per_topic = 50      # 50 URLs par sujet (au lieu de 10)
-quality_threshold = 0.6       # Garde plus de contenu
-sleep_between_topics = 2      # Plus rapide
-max_concurrent_topics = 5     # Traite 5 sujets en parallèle
+max_urls_per_topic = 50           # 50 URLs per topic (instead of 10)
+quality_threshold = 0.6            # Keep more content
+sleep_between_topics = 2           # Faster processing
+max_concurrent_topics = 5          # Process 5 topics in parallel
+multilingual_enabled = true        # Enable multilingual Q&A
+target_languages = [               # 12 languages
+    "fr", "en", "es", "ar", "pt", "de",
+    "it", "zh", "ja", "ru", "hi", "sw"
+]
 
-# Lancer avec 100 sujets
+# Launch with 100 topics
 python main.py auto-scrape --topics 100
 ```
 
-**Résultat attendu :**
-- 100 sujets médicaux
-- ~50 pages par sujet
-- ~10 Q&A par page
-- = **~50,000 paires Q&A de qualité !**
+**Expected output:**
+- 100 medical topics
+- ~50 pages per topic = 5,000 pages
+- ~60 Q&A per page (5 per language × 12 languages)
+- = **~300,000 multilingual Q&A pairs!**
+- Cost: ~$10-20 USD
+- Duration: 5-8 hours (fully automated)
 
 #### 🌐 Universal Web Scraper (Manual URLs)
 
