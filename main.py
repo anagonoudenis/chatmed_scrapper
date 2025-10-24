@@ -34,6 +34,7 @@ from core.cleaner import DataPipeline
 from core.scraper import AsyncScraper
 from core.storage import DataStorage
 from core.web_scraper import UniversalWebScraper
+from core.autonomous_agent import AutonomousAgent
 from utils.config import get_config
 
 # Initialize Typer app
@@ -397,6 +398,74 @@ def scrape_all(
         console.print(f"[bold red]Error:[/bold red] {e}")
         logger.exception("Batch scraping failed")
         raise typer.Exit(code=1)
+
+
+@app.command()
+def auto_scrape(
+    topics: Optional[int] = typer.Option(None, "--topics", "-t", help="Number of topics to generate"),
+    continuous: bool = typer.Option(False, "--continuous", help="Run continuously"),
+    config_file: Path = typer.Option(Path("config.toml"), "--config", "-c", help="Path to config file"),
+    log_level: str = typer.Option("INFO", "--log-level", help="Logging level"),
+) -> None:
+    """
+    🤖 AUTONOMOUS SCRAPING MODE
+    
+    The agent will:
+    1. Generate medical topics automatically using DeepSeek AI
+    2. Find the best URLs for each topic
+    3. Scrape and validate content
+    4. Enrich data with Q&A pairs
+    5. Save organized datasets
+    
+    Zero human intervention required!
+    
+    Examples:
+        # Scrape 50 topics (default)
+        python main.py auto-scrape
+        
+        # Scrape 100 topics
+        python main.py auto-scrape --topics 100
+        
+        # Run continuously (infinite loop)
+        python main.py auto-scrape --continuous
+    """
+    setup_logging(log_level)
+    
+    try:
+        config = get_config(config_file)
+        
+        # Check if autonomous mode is enabled
+        if not config.autonomous.enabled:
+            console.print("[bold red]Error:[/bold red] Autonomous mode is disabled in config.toml")
+            console.print("Enable it by setting [autonomous] enabled = true")
+            raise typer.Exit(code=1)
+        
+        # Check DeepSeek API key
+        if not config.deepseek.api_key:
+            console.print("[bold red]Error:[/bold red] DeepSeek API key not configured")
+            console.print("Add your API key in config.toml under [deepseek] section:")
+            console.print("  api_key = \"your-api-key-here\"")
+            console.print("\nGet your API key at: https://platform.deepseek.com/")
+            raise typer.Exit(code=1)
+        
+        # Run autonomous agent
+        asyncio.run(_run_autonomous_agent(config, topics, continuous))
+        
+    except Exception as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        logger.exception("Autonomous scraping failed")
+        raise typer.Exit(code=1)
+
+
+async def _run_autonomous_agent(config: any, topics: Optional[int], continuous: bool) -> None:
+    """Run the autonomous agent"""
+    async with AutonomousAgent(config) as agent:
+        stats = await agent.run_autonomous(topics_count=topics, continuous=continuous)
+        
+        # Display success message
+        if stats.topics_completed > 0:
+            console.print(f"[bold green]✓ Successfully processed {stats.topics_completed} topics![/bold green]")
+            console.print(f"[yellow]Check data/output/ for results[/yellow]")
 
 
 @app.command()

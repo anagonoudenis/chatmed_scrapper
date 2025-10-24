@@ -1,17 +1,21 @@
 # ChatMed Medical Data Scraper 2025
 
-**Production-ready, zero-bug medical data scraping framework for ChatMed AI.**
+**Production-ready, universal web scraping framework for medical data.**
 
-A bulletproof Python framework for ethically scraping, cleaning, and enriching medical data from public sources (PubMed, WHO) with 95%+ test coverage, comprehensive error handling, and ML-powered enrichment.
+A bulletproof Python framework for ethically scraping, cleaning, and enriching medical data from **ANY website** or public APIs (PubMed, WHO) with comprehensive error handling and ML-powered enrichment.
 
 ## 🚀 Features
 
 ### Core Capabilities
+- **🤖 Autonomous Agent (NEW!)**: Zero-intervention scraping - generates topics, finds URLs, scrapes, validates, and enriches automatically
+- **🧠 AI-Powered with DeepSeek**: Intelligent topic generation, URL discovery, content validation, and Q&A generation
+- **Universal Web Scraper**: Scrape ANY medical website from URLs - automatic content extraction
+- **Batch Processing**: Scrape multiple URL files simultaneously, each with separate output folders
 - **Bulletproof Async Scraping**: Circuit breakers, retry with jitter, adaptive rate limiting
 - **API-First Approach**: PubMed E-utilities, WHO REST APIs (80% coverage)
-- **Zero-Bug Guarantees**: Exhaustive error handling, Pydantic validation, 95%+ test coverage
-- **ML-Powered Enrichment**: spaCy NER, sentence-transformers embeddings, Q&A generation
-- **Ethics & Compliance**: robots.txt checking, PII anonymization, TOS validation
+- **Intelligent Content Extraction**: Auto-detects titles, content, metadata, images, and links
+- **Quality Validation**: Automatic content scoring and filtering (configurable threshold)
+- **Ethics & Compliance**: Rate limiting, PII anonymization, configurable robots.txt checking
 - **Local-Only Storage**: JSONL, Parquet, SQLite - no cloud dependencies
 
 ### 2025 Technical Stack
@@ -23,12 +27,58 @@ A bulletproof Python framework for ethically scraping, cleaning, and enriching m
 - **API**: FastAPI v0.115+ with async endpoints, rate limiting, auth
 - **Testing**: pytest with 95%+ coverage, async tests, chaos testing ready
 
+## ⚡ Quick Start
+
+### 🤖 Mode Autonome (NOUVEAU - Recommandé!)
+
+**Zéro intervention humaine - L'agent fait tout automatiquement !**
+
+```bash
+# 1. Install dependencies
+pip install -r requirements-minimal.txt
+
+# 2. Get DeepSeek API key (free credits available)
+# Visit: https://platform.deepseek.com/
+
+# 3. Add API key to config.toml
+[deepseek]
+api_key = "sk-your-key-here"
+
+# 4. Launch autonomous agent!
+python main.py auto-scrape
+
+# The agent will:
+# - Generate 50 medical topics automatically
+# - Find best URLs for each topic
+# - Scrape, validate, and enrich data
+# - Save organized datasets by topic
+```
+
+### 🌐 Mode Manuel (URLs personnalisées)
+
+```bash
+# 1. Install minimal dependencies (Windows-friendly)
+pip install -r requirements-minimal.txt
+
+# 2. Create a file with URLs (diabete.txt)
+echo "https://www.mayoclinic.org/diseases-conditions/diabetes/symptoms-causes/syc-20371444" > diabete.txt
+echo "https://medlineplus.gov/diabetes.html" >> diabete.txt
+
+# 3. Scrape!
+python main.py scrape-web -f diabete.txt
+
+# 4. Or scrape ALL .txt files at once
+python main.py scrape-all
+
+# Results in: data/output/diabete/web_scrape_*.jsonl
+```
+
 ## 📦 Installation
 
 ### Prerequisites
 - Python 3.12 or higher
-- 4GB+ RAM (for ML models)
-- 2GB+ disk space (for models and cache)
+- 2GB+ RAM
+- 1GB+ disk space (for ML models cache)
 
 ### Setup
 
@@ -41,10 +91,13 @@ cd chatmed_scrapper
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
+# Install minimal dependencies (recommended for Windows)
+pip install -r requirements-minimal.txt
+
+# OR install full dependencies (requires C++ compiler)
 pip install -r requirements.txt
 
-# Download spaCy models (optional, for NER)
+# Download spaCy models (optional, for advanced NER)
 python -m spacy download fr_core_news_lg
 python -m spacy download en_core_sci_lg
 
@@ -90,10 +143,104 @@ See `config.toml` for complete configuration options.
 
 ### CLI Commands
 
-#### Scrape Medical Data
+#### 🤖 Autonomous Agent (NEW! - Zero Intervention)
+
+**The agent does EVERYTHING automatically:**
 
 ```bash
-# Basic scraping
+# Basic autonomous scraping (50 topics)
+python main.py auto-scrape
+
+# Custom number of topics
+python main.py auto-scrape --topics 100
+
+# Continuous mode (runs forever)
+python main.py auto-scrape --continuous
+```
+
+**What the agent does:**
+1. 📋 Generates medical topics using DeepSeek AI
+2. 🔍 Finds best URLs for each topic automatically
+3. 🌐 Scrapes all URLs
+4. ✅ Validates content quality (rejects low-quality pages)
+5. 🤖 Enriches data with Q&A pairs
+6. 💾 Saves organized datasets by topic
+
+**Example output:**
+```
+data/output/
+├── diabete_type2/
+│   └── autonomous_scrape_20251024_193045.jsonl
+├── paludisme/
+│   └── autonomous_scrape_20251024_193152.jsonl
+├── hypertension_arterielle/
+│   └── autonomous_scrape_20251024_193258.jsonl
+└── reports/
+    └── autonomous_report_20251024_195030.json
+```
+
+**📖 Full guide:** See [AUTONOMOUS_GUIDE.md](AUTONOMOUS_GUIDE.md)
+
+**🚀 Mode Scraping Massif (Haute Performance):**
+
+Pour scraper une **quantité colossale de données** par sujet :
+
+```bash
+# Configuration optimisée dans config.toml :
+[autonomous]
+max_urls_per_topic = 50      # 50 URLs par sujet (au lieu de 10)
+quality_threshold = 0.6       # Garde plus de contenu
+sleep_between_topics = 2      # Plus rapide
+max_concurrent_topics = 5     # Traite 5 sujets en parallèle
+
+# Lancer avec 100 sujets
+python main.py auto-scrape --topics 100
+```
+
+**Résultat attendu :**
+- 100 sujets médicaux
+- ~50 pages par sujet
+- ~10 Q&A par page
+- = **~50,000 paires Q&A de qualité !**
+
+#### 🌐 Universal Web Scraper (Manual URLs)
+
+**Scrape ANY medical website from URLs:**
+
+```bash
+# 1. Create a file with URLs (one per line)
+# Example: diabete.txt
+https://www.mayoclinic.org/diseases-conditions/diabetes/symptoms-causes/syc-20371444
+https://medlineplus.gov/diabetes.html
+https://www.who.int/health-topics/diabetes
+
+# 2. Scrape a single URL file
+python main.py scrape-web -f diabete.txt
+# Output: data/output/diabete/web_scrape_YYYYMMDD_HHMMSS.jsonl
+
+# 3. Scrape ALL URL files at once (batch mode)
+python main.py scrape-all
+# Automatically finds all .txt files and scrapes them
+# Each file gets its own output folder:
+#   - diabete.txt → data/output/diabete/
+#   - paludisme.txt → data/output/paludisme/
+#   - cancer.txt → data/output/cancer/
+
+# 4. Custom output location
+python main.py scrape-web -f mes_sites.txt -o custom_output.jsonl
+```
+
+**What gets extracted automatically:**
+- ✅ Page title and main content
+- ✅ Metadata (authors, dates, keywords)
+- ✅ All images with alt text
+- ✅ Internal links
+- ✅ OpenGraph and Twitter Card data
+
+#### 📚 PubMed API Scraper
+
+```bash
+# Basic scraping from PubMed
 python main.py scrape --query "diabetes symptoms" --pages 10
 
 # French medical query
@@ -175,7 +322,42 @@ curl "http://127.0.0.1:8000/api/v1/stats"
 
 ## 📊 Output Formats
 
-### JSONL (LLM Fine-Tuning Ready)
+### Web Scraper Output (JSONL)
+
+```jsonl
+{
+  "url": "https://www.mayoclinic.org/diseases-conditions/diabetes/symptoms-causes/syc-20371444",
+  "domain": "www.mayoclinic.org",
+  "scraped_at": "2025-10-24T19:01:34.885148",
+  "title": "Diabetes - Symptoms and causes - Mayo Clinic",
+  "content": "Diabetes mellitus refers to a group of diseases...",
+  "abstract": "Learn more about the different types of this blood sugar disorder...",
+  "metadata": {
+    "og:title": "Diabetes - Symptoms and causes",
+    "og:type": "article",
+    "PublishDate": "2024-03-27",
+    "contentLanguage": "en"
+  },
+  "authors": [],
+  "date": "",
+  "keywords": [],
+  "images": [
+    {
+      "url": "https://assets.mayoclinic.org/content/dam/...",
+      "alt": "Mayo Clinic Home Page",
+      "title": ""
+    }
+  ],
+  "links": [
+    {
+      "url": "https://www.mayoclinic.org/diseases-conditions",
+      "text": "Diseases & Conditions"
+    }
+  ]
+}
+```
+
+### PubMed API Output (JSONL)
 
 ```jsonl
 {
@@ -318,26 +500,38 @@ black . && ruff check . && mypy . && pytest
 ```
 chatmed_scrapper/
 ├── core/
-│   ├── scraper.py       # Async scraping engine
-│   ├── cleaner.py       # Data cleaning pipeline
-│   └── storage.py       # Local storage manager
+│   ├── scraper.py           # PubMed API scraping engine
+│   ├── web_scraper.py       # Universal web scraper
+│   ├── autonomous_agent.py  # Autonomous AI agent (NEW!)
+│   ├── cleaner.py           # Data cleaning pipeline
+│   └── storage.py           # Local storage manager
 ├── utils/
-│   ├── config.py        # Configuration management
-│   ├── ethics.py        # Ethics & compliance
-│   └── ml_utils.py      # ML enrichment utilities
+│   ├── config.py            # Configuration management
+│   ├── deepseek_client.py   # DeepSeek API client (NEW!)
+│   ├── ethics.py            # Ethics & compliance
+│   └── ml_utils.py          # ML enrichment utilities
 ├── api/
-│   └── routes.py        # FastAPI endpoints
+│   └── routes.py            # FastAPI endpoints
 ├── tests/
-│   ├── conftest.py      # Test fixtures
+│   ├── conftest.py          # Test fixtures
 │   ├── test_scraper.py
 │   ├── test_cleaner.py
 │   ├── test_ethics.py
 │   └── ...
-├── main.py              # CLI entry point
-├── config.toml          # Configuration file
-├── requirements.txt     # Dependencies
-├── pyproject.toml       # Tool configuration
-└── README.md            # This file
+├── data/
+│   └── output/              # Scraped data (gitignored)
+│       ├── diabete_type2/   # Autonomous agent output
+│       ├── paludisme/       # Autonomous agent output
+│       ├── diabete/         # Manual scraping output
+│       └── reports/         # Agent reports
+├── main.py                  # CLI entry point
+├── config.toml              # Configuration file
+├── requirements.txt         # Full dependencies
+├── requirements-minimal.txt # Minimal dependencies (Windows-friendly)
+├── AUTONOMOUS_GUIDE.md      # Autonomous agent guide (NEW!)
+├── README.md                # This file
+├── diabete.txt              # Example URL file
+└── paludisme.txt            # Example URL file
 ```
 
 ## 🚨 Troubleshooting

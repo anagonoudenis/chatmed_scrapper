@@ -161,3 +161,39 @@ dry_run = false
 mock_mode = false
 test_sample_size = 5
 chaos_testing = false
+
+[deepseek]
+# DeepSeek API configuration for autonomous agent
+api_key = ""  # Add your DeepSeek API key here
+api_url = "https://api.deepseek.com/v1/chat/completions"
+model = "deepseek-chat"
+temperature = 0.7
+max_tokens = 4000
+timeout = 60
+
+[autonomous]
+# Autonomous scraping agent configuration
+enabled = true
+topics_per_run = 50
+max_urls_per_topic = 50  # AUGMENTÉ : 50 URLs par sujet au lieu de 10
+quality_threshold = 0.6  # RÉDUIT : Garde plus de contenu (0.6 au lieu de 0.7)
+continuous_mode = false
+sleep_between_topics = 2  # RÉDUIT : Plus rapide (2s au lieu de 5s)
+max_concurrent_topics = 5  # AUGMENTÉ : Traite 5 sujets en parallèle
+
+# Multilingual support - Generate Q&A in multiple languages
+multilingual_enabled = true
+target_languages = [
+    "fr",  # Français
+    "en",  # English
+    "es",  # Español
+    "ar",  # العربية (Arabic)
+    "pt",  # Português
+    "de",  # Deutsch
+    "it",  # Italiano
+    "zh",  # 中文 (Chinese)
+    "ja",  # 日本語 (Japanese)
+    "ru",  # Русский (Russian)
+    "hi",  # हिन्दी (Hindi)
+    "sw",  # Kiswahili (Swahili)
+]

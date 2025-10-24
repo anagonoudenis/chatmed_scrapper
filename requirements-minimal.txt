@@ -18,6 +18,7 @@ numpy==1.26.4
 
 # Configuration
 tomli==2.0.1
+python-dotenv==1.0.0
 
 # Text processing utilities
 rapidfuzz==3.9.3

@@ -1,14 +1,23 @@
 """
-Configuration management using TOML (NO .env files).
-Validates all settings with Pydantic v2 for zero-bug guarantees.
-Prompts for sensitive values at runtime if needed.
+Configuration management for ChatMed Scraper.
+Loads and validates configuration from TOML files.
+Supports environment variables for sensitive data.
 """
 
+import os
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Dict, Optional, Literal
 
 import tomli
 from loguru import logger
+
+# Try to load python-dotenv for .env file support
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # Load .env file if it exists
+    DOTENV_AVAILABLE = True
+except ImportError:
+    DOTENV_AVAILABLE = False
 from pydantic import BaseModel, Field, validator
 
 
@@ -170,6 +179,31 @@ class TestingConfig(BaseModel):
     chaos_testing: bool = False
 
 
+class DeepSeekConfig(BaseModel):
+    """DeepSeek API configuration."""
+    
+    api_key: str = ""
+    api_url: str = "https://api.deepseek.com/v1/chat/completions"
+    model: str = "deepseek-chat"
+    temperature: float = Field(ge=0.0, le=2.0, default=0.7)
+    max_tokens: int = Field(ge=100, le=8000, default=4000)
+    timeout: int = Field(ge=10, le=300, default=60)
+
+
+class AutonomousConfig(BaseModel):
+    """Autonomous agent configuration."""
+    
+    enabled: bool = True
+    topics_per_run: int = Field(ge=1, le=500, default=50)
+    max_urls_per_topic: int = Field(ge=1, le=50, default=10)
+    quality_threshold: float = Field(ge=0.0, le=1.0, default=0.7)
+    continuous_mode: bool = False
+    sleep_between_topics: int = Field(ge=1, le=60, default=5)
+    max_concurrent_topics: int = Field(ge=1, le=10, default=3)
+    multilingual_enabled: bool = False
+    target_languages: list = ["fr", "en"]
+
+
 class AppConfig(BaseModel):
     """
     Main application configuration.
@@ -187,6 +221,8 @@ class AppConfig(BaseModel):
     monitoring: MonitoringConfig
     api: APIConfig
     testing: TestingConfig
+    deepseek: DeepSeekConfig
+    autonomous: AutonomousConfig
     
     class Config:
         """Pydantic v1 configuration."""
@@ -196,6 +232,7 @@ class AppConfig(BaseModel):
     def load_from_toml(cls, config_path: Path = Path("config.toml")) -> "AppConfig":
         """
         Load and validate configuration from TOML file.
+        Supports environment variables for sensitive data (API keys).
         Raises ValidationError if configuration is invalid.
         """
         if not config_path.exists():
@@ -204,6 +241,19 @@ class AppConfig(BaseModel):
         try:
             with open(config_path, "rb") as f:
                 config_data = tomli.load(f)
+
+            # Override API keys from environment variables if available
+            if "deepseek" in config_data:
+                env_key = os.getenv("DEEPSEEK_API_KEY")
+                if env_key:
+                    config_data["deepseek"]["api_key"] = env_key
+                    logger.info("DeepSeek API key loaded from environment variable")
+            
+            if "sources" in config_data and "pubmed" in config_data["sources"]:
+                env_key = os.getenv("PUBMED_API_KEY")
+                if env_key:
+                    config_data["sources"]["pubmed"]["api_key"] = env_key
+                    logger.info("PubMed API key loaded from environment variable")
 
             # Validate and create config
             config = cls(**config_data)
