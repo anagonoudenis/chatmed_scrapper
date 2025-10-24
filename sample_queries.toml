@@ -1,0 +1,36 @@
+# Sample queries for ChatMed medical data scraper
+# Copy to config.toml and modify as needed
+
+[sample_queries]
+
+# French medical queries (African focus)
+french_diabetes = "diabète symptômes traitement Afrique francophone"
+french_malaria = "paludisme prévention traitement Afrique subsaharienne"
+french_tuberculosis = "tuberculose diagnostic traitement résistance"
+french_hiv = "VIH SIDA traitement antirétroviral Afrique"
+
+# English medical queries
+english_diabetes = "diabetes mellitus symptoms treatment management"
+english_hypertension = "hypertension blood pressure treatment guidelines"
+english_cancer = "cancer oncology treatment chemotherapy radiation"
+english_covid = "COVID-19 coronavirus symptoms treatment vaccine"
+
+# Multilingual queries
+multilingual_maternal = "maternal health santé maternelle pregnancy grossesse"
+multilingual_child = "child health santé infantile vaccination immunization"
+
+# Specific disease queries
+cardiovascular = "cardiovascular disease heart failure myocardial infarction"
+respiratory = "respiratory disease asthma COPD pneumonia"
+infectious = "infectious disease epidemic pandemic outbreak"
+chronic = "chronic disease non-communicable disease NCD"
+
+# Treatment-focused queries
+pharmacology = "drug therapy medication pharmacology adverse effects"
+surgery = "surgical procedure operation postoperative complications"
+prevention = "disease prevention public health intervention screening"
+
+# Research-focused queries
+clinical_trials = "clinical trial randomized controlled trial RCT"
+epidemiology = "epidemiology prevalence incidence risk factors"
+diagnostics = "diagnostic test sensitivity specificity biomarker"

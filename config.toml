@@ -1,0 +1,163 @@
+# ChatMed Medical Scraper Configuration (2025 Production)
+# All configuration via TOML - NO .env files required
+# Sensitive values can be prompted at runtime or disabled gracefully
+
+[scraper]
+# Target query for medical data extraction
+default_query = "diabetes symptoms treatment"
+max_pages = 15
+max_results_per_query = 100
+
+# Rate limiting (adaptive token bucket)
+rate_limit_min_seconds = 0.5
+rate_limit_max_seconds = 2.0
+concurrent_requests = 50
+
+# Retry configuration (fibonacci backoff with jitter)
+max_retries = 7
+retry_base_delay = 1.0
+retry_max_delay = 60.0
+
+# Circuit breaker thresholds
+circuit_breaker_failure_threshold = 5
+circuit_breaker_timeout = 60
+
+[sources]
+# Primary data sources (API-first, scraping fallback)
+enabled = ["pubmed", "who"]
+
+[sources.pubmed]
+api_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+api_key = ""  # Optional: Leave empty to use without key (slower rate)
+use_api = true
+fallback_scrape = true
+base_url = "https://pubmed.ncbi.nlm.nih.gov/"
+
+[sources.who]
+api_url = "https://ghoapi.azureedge.net/api/"
+base_url = "https://www.who.int/"
+use_api = true
+
+[network]
+# User agents (2025-compliant, rotating)
+user_agents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.4; rv:124.0) Gecko/20100101 Firefox/124.0"
+]
+
+# Proxy configuration (auto-fetch free proxies, optional)
+use_proxies = false
+proxy_rotation = "sticky"  # sticky, random, round-robin
+max_proxy_failures = 3
+
+# TLS and headers
+verify_ssl = true
+timeout_seconds = 30
+
+[cache]
+# Local caching (SQLite-based LRU)
+enabled = true
+ttl_hours = 48
+max_size_mb = 500
+auto_vacuum = true
+
+[data]
+# Output configuration (all local, no cloud)
+output_dir = "./data/output"
+backup_dir = "./data/backups"
+cache_dir = "./data/cache"
+
+# Export formats
+export_jsonl = true
+export_parquet = true
+export_sqlite = true
+
+# Data quality thresholds
+min_abstract_length = 200
+max_abstract_length = 3000
+min_title_length = 10
+max_title_length = 250
+min_relevance_score = 0.6
+min_quality_score = 0.9
+
+[ml]
+# NLP and ML configuration
+spacy_model = "fr_core_news_lg"  # French medical focus
+scispacy_model = "en_core_sci_lg"  # Scientific English
+embedding_model = "sentence-transformers/all-mpnet-base-v2"
+
+# NER extraction
+extract_entities = true
+entity_types = ["SYMPTOM", "DISEASE", "DRUG", "TREATMENT", "ANATOMY"]
+
+# Text enrichment
+generate_keywords = true
+max_keywords = 15
+generate_qa_pairs = true
+qa_pairs_per_entry = 5
+
+# Zero-shot classification
+classify_content = true
+classification_labels = ["diagnostic", "treatment", "prevention", "epidemiology"]
+
+[ethics]
+# Compliance and ethics (2025 standards)
+check_robots_txt = false  # Désactivé temporairement pour PubMed API
+respect_tos = true
+abort_on_violation = false
+
+# PII protection
+anonymize_pii = true
+pii_patterns = ["email", "phone", "ssn", "medical_id"]
+
+# Rate limiting (global daily cap)
+max_requests_per_day = 2000
+
+# Metadata and consent
+embed_compliance_metadata = true
+log_consent = true
+
+[monitoring]
+# Logging configuration
+log_level = "INFO"  # DEBUG, INFO, WARNING, ERROR
+log_format = "json"
+log_file = "./logs/scraper.log"
+log_rotation = "100 MB"
+
+# Progress tracking
+show_progress = true
+progress_style = "rich"  # rich, tqdm, simple
+
+# Metrics export (local only)
+export_metrics = true
+metrics_file = "./logs/metrics.json"
+
+# Alerting (optional webhook, disabled by default)
+enable_alerts = false
+alert_webhook_url = ""  # Leave empty to disable
+alert_threshold_error_rate = 0.05
+
+[api]
+# FastAPI configuration
+enabled = false  # Set to true to enable API server
+host = "127.0.0.1"
+port = 8000
+reload = false
+
+# Authentication (optional, disabled by default)
+require_auth = false
+api_key = ""  # Leave empty to disable auth
+
+# Rate limiting
+rate_limit_enabled = true
+rate_limit_per_minute = 60
+
+[testing]
+# Test and dry-run configuration
+dry_run = false
+mock_mode = false
+test_sample_size = 5
+chaos_testing = false

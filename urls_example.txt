@@ -1,0 +1,17 @@
+# Exemple de fichier URLs pour le scraping web
+# Une URL par ligne - Commentaires commencent par #
+
+# Sites médicaux francophones
+https://www.who.int/fr/news-room/fact-sheets/detail/diabetes
+https://www.pasteur.fr/fr/centre-medical/fiches-maladies/paludisme
+https://www.inserm.fr/dossier/diabete-type-2/
+
+# Sites médicaux anglophones
+https://www.cdc.gov/diabetes/basics/diabetes.html
+https://www.mayoclinic.org/diseases-conditions/diabetes/symptoms-causes/syc-20371444
+https://medlineplus.gov/diabetes.html
+
+# Articles scientifiques (si accessibles)
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8234567/
+
+# Ajoutez vos propres URLs ici...

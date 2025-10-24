@@ -1,0 +1,60 @@
+[tool.black]
+line-length = 100
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "C",   # flake8-comprehensions
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+ignore = ["E501", "B008", "C901"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_generics = false
+disallow_subclassing_any = false
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+module = [
+    "spacy.*",
+    "scispacy.*",
+    "sentence_transformers.*",
+    "transformers.*",
+    "bs4.*",
+    "polars.*",
+    "pybreaker.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--cov=core",
+    "--cov=utils",
+    "--cov=api",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-fail-under=95"
+]
+
+[tool.coverage.run]
+source = ["core", "utils", "api"]
+omit = ["tests/*", "**/__pycache__/*"]
