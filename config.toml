@@ -163,13 +163,13 @@ test_sample_size = 5
 chaos_testing = false
 
 [deepseek]
-# DeepSeek API configuration for autonomous agent
-api_key = ""  # Add your DeepSeek API key here
+# DeepSeek API configuration
+api_key = ""  # Will be loaded from environment variable DEEPSEEK_API_KEY
 api_url = "https://api.deepseek.com/v1/chat/completions"
 model = "deepseek-chat"
 temperature = 0.7
 max_tokens = 4000
-timeout = 60
+timeout = 120  # Augmenté à 120 secondes pour les requêtes multilingues
 
 [autonomous]
 # Autonomous scraping agent configuration
@@ -187,13 +187,15 @@ target_languages = [
     "fr",  # Français
     "en",  # English
     "es",  # Español
-    "ar",  # العربية (Arabic)
-    "pt",  # Português
-    "de",  # Deutsch
-    "it",  # Italiano
-    "zh",  # 中文 (Chinese)
-    "ja",  # 日本語 (Japanese)
-    "ru",  # Русский (Russian)
-    "hi",  # हिन्दी (Hindi)
-    "sw",  # Kiswahili (Swahili)
+    # Réduisez le nombre de langues pour plus de stabilité
+    # Décommentez pour ajouter plus de langues une fois que ça fonctionne
+    # "ar",  # العربية (Arabic)
+    # "pt",  # Português
+    # "de",  # Deutsch
+    # "it",  # Italiano
+    # "zh",  # 中文 (Chinese)
+    # "ja",  # 日本語 (Japanese)
+    # "ru",  # Русский (Russian)
+    # "hi",  # हिन्दी (Hindi)
+    # "sw",  # Kiswahili (Swahili)
 ]

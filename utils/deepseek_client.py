@@ -82,11 +82,16 @@ class DeepSeekClient:
                 else:
                     raise ValueError("Invalid API response format")
                     
+        except asyncio.TimeoutError as e:
+            logger.error(f"DeepSeek API timeout after {self.config.timeout}s: {e}")
+            raise
         except aiohttp.ClientError as e:
-            logger.error(f"DeepSeek API error: {e}")
+            logger.error(f"DeepSeek API client error: {type(e).__name__} - {e}")
             raise
         except Exception as e:
-            logger.error(f"Unexpected error calling DeepSeek API: {e}")
+            logger.error(f"Unexpected error calling DeepSeek API: {type(e).__name__} - {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             raise
     
     async def generate_medical_topics(self, count: int = 50, language: str = "fr") -> List[str]:

@@ -271,8 +271,8 @@ class AutonomousAgent:
                     if self.config.autonomous.multilingual_enabled:
                         # Generate multilingual Q&A
                         multilingual_qa = await self.deepseek_client.generate_multilingual_qa_pairs(
-                            data.get('content', '')[:15000],
-                            count=5,  # 5 Q&A par langue
+                            data.get('content', '')[:10000],  # Réduit pour éviter timeout
+                            count=3,  # 3 Q&A par langue (réduit de 5)
                             languages=self.config.autonomous.target_languages
                         )
                         data['qa_pairs_multilingual'] = multilingual_qa
